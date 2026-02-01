@@ -1,11 +1,18 @@
-# leadsdashboard
-----------------------------  
+# Leads Dashboard by Forget Safety
 Dashboard Python (StreamLit) para acompanhar métricas de desempenho de Leads a partir de um CSV preenchido através do Google Sheets pelo Gestor de Leads.  
-Usando o Google Sheets com a estrutura indicada abaixo, pode-se exportar um CSV, colocar na pasta do projeto e acompanhar métricas importantes de avaliação e tomadas de decição para o melhor aproveitamento de Leads.
+Usando o Google Sheets com a estrutura indicada abaixo, pode-se exportar um CSV, colocar na pasta do projeto e acompanhar métricas importantes de avaliação e tomadas de decição para o melhor aproveitamento de Leads.  
+----------------------------  
+# Importação do DataFrame
+----------------------------  
+Carregue o seu CSV na parta raiz do App, lembre-se de alterar o Nome do Arquivo e/ou Path para corresponder com o seu CSV e altere a linha 100.
+```py
+df = pd.read_csv("Leads_3M_anon_vals.csv")
+```
 
 # Estrutura do Google Sheets:
 ------------------------------  
-Colunas -> From | Status | Data / Hora | Campanha | Nome Completo | Contato | Melhor Horário | Email | D/H - 1ª Ligação | D/H - 2ª Ligação | D/H - 3ª Ligação | Anotações | Conversão
+Colunas:  
+From | Status | Data / Hora | Campanha | Nome Completo | Contato | Melhor Horário | Email | D/H - 1ª Ligação | D/H - 2ª Ligação | D/H - 3ª Ligação | Anotações | Conversão
 
 # Como Preencher (Exemplos)
 ----------------------------  
@@ -26,7 +33,18 @@ Colunas -> From | Status | Data / Hora | Campanha | Nome Completo | Contato | Me
 # Privacidade
 --------------  
 Tabela real de Leads recebidas em uma Clínica Dentária situada em Lisboa / Portugal entre a última semana de Novembro 25 e o último dia de Janeiro 26.  
-Por motivos de privacidade, todos os Nomes, Contatos e Emails foram substituídos por 'Jane Doe'. 
+Por motivos de privacidade, todos os Nomes, Contatos e Emails foram substituídos por 'Jane Doe'.  
+
+Se quiser compartilhar um projeto real, garantindo a privacidade, pode converter o seu CSV e gerar um arquivo com Anônimato usando o código Python abaixo:
+```py
+# Certifique-se que a variável 'df' tem o seu DataFrame original carregado.
+df_anon = df.copy()
+df_anon['Nome'] = 'Jane Doe'
+df_anon['Contato'] = '351999111222'
+df_anon['Email'] = 'janedoe@gmail.com'
+df_anon.to_csv('DataFrame_Anon.csv', index=False)
+# Agora é só alterar o DataFrame na linha 100, apagar o antigo, e está pronto para compartilhar usando o Streamlit Community Cloud
+```
 
 # Personalização
 --------------  
