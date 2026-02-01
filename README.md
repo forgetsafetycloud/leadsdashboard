@@ -25,7 +25,17 @@ Colunas -> From | Status | Data / Hora | Campanha | Nome Completo | Contato | Me
 
 # Privacidade
 --------------  
-Por motivos de privacidade, todos os Nomes, Contatos e Emails foram substituídos por 'Jane Doe'.  
+Tabela real de Leads recebidas em uma Clínica Dentária situada em Lisboa / Portugal entre a última semana de Novembro 25 e o último dia de Janeiro 26.  
+Por motivos de privacidade, todos os Nomes, Contatos e Emails foram substituídos por 'Jane Doe'. 
+
+# Personalização
+--------------  
+-> Logos / Pode alterar as logos do Sidebar nas linhas 14 e 20 do app.py / Certifique-se de colocar o caminho correto.  
+```py
+logo_top_base64 = get_base64_image("img/toplogo.png")
+logo_bottom_base64 = get_base64_image("img/bottomlogo.png")
+```
+-> CSS / Da linha 32 a 97, pode estilizar o seu Dashboard usando CSS / Use o Developer Tools do seu navegador para encontrar IDs ou Classes das tags HTML renderizadas.
 
 # Regra rigorosa
 ----------------  
