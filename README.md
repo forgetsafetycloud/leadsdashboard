@@ -1,11 +1,11 @@
 # leadsdashboard
 ----------------------------  
-Dashboard Python (StreamLit) para acompanhar métricas de desempenho de Leads a partir de um CSV preenchido através do Google Sheets pelo Gestor de Leads.
+Dashboard Python (StreamLit) para acompanhar métricas de desempenho de Leads a partir de um CSV preenchido através do Google Sheets pelo Gestor de Leads.  
 Usando o Google Sheets com a estrutura indicada abaixo, pode-se exportar um CSV, colocar na pasta do projeto e acompanhar métricas importantes de avaliação e tomadas de decição para o melhor aproveitamento de Leads.
 
 # Estrutura do Google Sheets:
 ------------------------------  
-Colunas -> 🛜 From | ⚡️ Status | 📆 Data / Hora | 📝 Campanha | 🙋🏻‍♂️ Nome Completo | 📞 Contato | ⏰ Melhor Horário | ✉️ Email | D/H - 1ª Ligação | D/H - 2ª Ligação | D/H - 3ª Ligação | 🗒️ Anotações | 💰 Conversão
+Colunas -> From | Status | Data / Hora | Campanha | Nome Completo | Contato | Melhor Horário | Email | D/H - 1ª Ligação | D/H - 2ª Ligação | D/H - 3ª Ligação | Anotações | Conversão
 
 # Como Preencher (Exemplos)
 ----------------------------  
@@ -17,8 +17,16 @@ Colunas -> 🛜 From | ⚡️ Status | 📆 Data / Hora | 📝 Campanha | 🙋�
 📞 Contato -> 351999111222 (String) 'DDI + Número'  
 ⏰ Melhor Horário -> 9 às 13h (String) 'Opções de Intervalo do Dia, sempre XX às XX'  
 ✉️ Email -> janedoe@gmail.com (String)  
-D/H - 1ª Ligação -> 01/01/2026 00:32:06 / (Timestamp) 'dd/MM/yyyy HH:mm:ss'  
-D/H - 2ª Ligação -> 01/01/2026 00:32:06 / (Timestamp) 'dd/MM/yyyy HH:mm:ss'  
-D/H - 3ª Ligação -> 01/01/2026 00:32:06 / (Timestamp) 'dd/MM/yyyy HH:mm:ss'  
+📞 D/H - 1ª Ligação -> 01/01/2026 00:32:06 / (Timestamp) 'dd/MM/yyyy HH:mm:ss'  
+📞 D/H - 2ª Ligação -> 01/01/2026 00:32:06 / (Timestamp) 'dd/MM/yyyy HH:mm:ss'  
+📞 D/H - 3ª Ligação -> 01/01/2026 00:32:06 / (Timestamp) 'dd/MM/yyyy HH:mm:ss'  
 🗒️ Anotações -> Mora longe, não quer se deslocar. (String)  
-💰 Conversão -> 1.000,00€ (String) / 'Formato moeda local.'  
+💰 Conversão -> 1000 (String) / 'Sem casas decimais, pontos e vírgulas. O Código formata.' / Se precisar de preencher casas decimais, retire a formatação no código.  
+
+# Privacidade
+--------------  
+Por motivos de privacidade, todos os Nomes, Contatos e Emails foram substituídos por 'Jane Doe'.  
+
+# Regra rigorosa
+----------------  
+Se seguir a estrutura recomendada na tabela, não precisa fazer nenhuma alteração no código alem de subir o seu CSV, rodar o StreamLit e ser feliz.
