@@ -4,7 +4,7 @@ Usando o Google Sheets com a estrutura indicada abaixo, pode-se exportar um CSV,
 ----------------------------  
 # Importação do DataFrame
 ----------------------------  
-Carregue o seu CSV na parta raiz do App, lembre-se de alterar o Nome do Arquivo e/ou Path para corresponder com o seu CSV e altere a linha 100.
+Carregue o seu CSV na parta raiz do App, lembre-se de alterar o Nome do Arquivo e/ou Path para corresponder com o seu CSV e altere a linha 100. 👇🏼  
 ```py
 df = pd.read_csv("Leads_3M_anon_vals.csv")
 ```
@@ -30,12 +30,33 @@ From | Status | Data / Hora | Campanha | Nome Completo | Contato | Melhor Horár
 🗒️ Anotações -> Mora longe, não quer se deslocar. (String)  
 💰 Conversão -> 1000 (String) / 'Sem casas decimais, pontos e vírgulas. O Código formata.' / Se precisar de preencher casas decimais, retire a formatação no código.  
 
+# Métricas disponíveis para análise (13)
+--------------  
+-> Total de Leads  
+-> Status Mais Frequente  
+-> Origem Mais Comum  
+-> Campanha Mais Relevante  
+-> Leads 'Pendente' (Desperdício)  
+-> Contactos realizados no Horário Preferencial (Do cliente) nas primeiras 24h  
+-> Horário Preferencial + Frequente (Cliente)  
+-> Horário Preferencial + Utilizado (Gestor)  
+-> Distribuição dos Status dos Leads (Gráfico)  
+-> Distribuição de Leads Contactados por Tempo de Resposta (Gráfico)  
+-> Funil de Leads 'Não Atendeu' por Tentativa de Ligação (Gráfico)  
+-> Contagem de Dias Úteis (Entre 1ª e última Lead) Vs. Dias não Trabalhados (Neste Range)  
+-> Total de Conversão (Formatado com . nos milheiros e , nos decimais, em Euros)  
+
+Se quiser alterar para a sua moeda local como R$ ou $ edite a linha 446. 👇🏼  
+```py
+col10.metric("Total de Conversão", f"{valor_formatado}€")
+```
+
 # Privacidade
 --------------  
 Tabela real de Leads recebidas em uma Clínica Dentária situada em Lisboa / Portugal entre a última semana de Novembro 25 e o último dia de Janeiro 26.  
 Por motivos de privacidade, todos os Nomes, Contatos e Emails foram substituídos por 'Jane Doe'.  
 
-Se quiser compartilhar um projeto real, garantindo a privacidade, pode converter o seu CSV e gerar um arquivo com Anônimato usando o código Python abaixo:
+Se quiser compartilhar um projeto real, garantindo a privacidade, pode converter o seu CSV e gerar um arquivo com anonimato usando o código Python. 👇🏼  
 ```py
 # Certifique-se que a variável 'df' tem o seu DataFrame original carregado.
 df_anon = df.copy()
@@ -48,7 +69,7 @@ df_anon.to_csv('DataFrame_Anon.csv', index=False)
 
 # Personalização
 --------------  
--> Logos / Pode alterar as logos do Sidebar nas linhas 14 e 20 do app.py / Certifique-se de colocar o caminho correto.  
+-> Logos / Pode alterar as logos do Sidebar nas linhas 14 e 20 do app.py / Certifique-se de colocar o caminho correto. 👇🏼  
 ```py
 logo_top_base64 = get_base64_image("img/toplogo.png")
 logo_bottom_base64 = get_base64_image("img/bottomlogo.png")
