@@ -392,7 +392,7 @@ if not df_filtrado.empty:
 
 col_graf3, col9, col10 = st.columns([0.8, 0.2, 0.2])
 
-col9.metric("Dias Úteis / Ñ Trabalhados", f"{date_range_filtered} / {count_weekdays_not_worked_filtered}")
+col9.metric("Dias Úteis / Ñ Trabalhados", f"{len(weekdays_in_range_filtered)} / {count_weekdays_not_worked_filtered}")
 
 # 1. Inicializar variáveis
 total_nao_atendeu_filtered = 0
