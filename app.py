@@ -3,6 +3,16 @@ import pandas as pd
 import plotly.express as px
 import calendar
 import base64
+import datetime
+import requests
+import json
+import hmac
+import hashlib
+
+# Variáveis de SK
+url = st.secrets["N8N_URL"]
+api_key = st.secrets["API_KEY"]
+secret = st.secrets["API_SECRET"]
 
 # Converter imagem para base64
 def get_base64_image(image_path):
@@ -89,6 +99,24 @@ st.markdown(
         margin-top: 25vh;
         padding: 10px; /* Padding interno à logo */
         border-radius: 5px;
+    }
+
+    /* Margem da Logo Bottom no Mobile */
+    @media only screen and (max-width: 768px) {
+        #logo-bottom-sidebar { margin-top: 15vh; }
+    }
+
+    /* Prompt IA */
+    [data-testid="stWidgetLabel"] > div:first-child {
+        color: #202535; /* Cor da Label */
+    }
+
+    [data-testid="stTextAreaRootElement"] > div:first-child {
+        background-color: #202535; /* Cor do Fundo na TextArea */
+    }
+
+    [data-testid="stTextAreaRootElement"] > div:first-child > .st-b6 {
+        color: #fff!important; /* Cor do Texto na TextArea */
     }
 
     </style>
@@ -253,8 +281,8 @@ st.subheader("Desempenho")
 col5, col6, col7, col8 = st.columns(4)
 col5.metric("Leads 'Pendente' (Desperdício)", pendente_leads_filtrado)
 col6.metric("Contactos no H. Pref. em 24h", count_na_hora_certa_filtrado)
-col7.metric("Horário Preferencial + Freq. (Geral)", horario_preferencial_mais_frequente)
-col8.metric("Horário Preferencial + Utilizado (em Ligação)", horario_preferencial_mais_utilizado_em_ligacao)
+col7.metric("Horário Preferencial + Freq. (Cliente)", horario_preferencial_mais_frequente)
+col8.metric("Horário Preferencial + Utilizado (Gestor)", horario_preferencial_mais_utilizado_em_ligacao)
 
 st.markdown("---")
 
@@ -390,7 +418,7 @@ if not df_filtrado.empty:
         # 3h. Conte esses dias úteis não trabalhados
         count_weekdays_not_worked_filtered = len(weekdays_not_worked_filtered_list)
 
-col_graf3, col9, col10 = st.columns([0.8, 0.2, 0.2])
+col_graf3, col9, col10 = st.columns([0.6, 0.2, 0.4])
 
 col9.metric("Dias Úteis / Ñ Trabalhados", f"{len(weekdays_in_range_filtered)} / {count_weekdays_not_worked_filtered}")
 
@@ -429,7 +457,7 @@ funnel_data_filtered = {
 df_funil_filtered = pd.DataFrame(funnel_data_filtered)
 
 with col_graf3:
-    st.subheader("Funil de Leads 'Não Atendeu'")
+    # st.subheader("Funil de Leads 'Não Atendeu'")
     # Verifique se df_filtrado está vazio ou se todas as contagens em df_funil_filtered são zero.
     if df_filtrado.empty or df_funil_filtered['Contagem'].sum() == 0:
         st.warning("Nenhum dado disponível para o funil de leads com os filtros selecionados.")
@@ -442,8 +470,158 @@ with col_graf3:
         fig_funnel_filtered.update_layout(xaxis_title='Número de Leads', yaxis_title='Etapa da Ligação')
         st.plotly_chart(fig_funnel_filtered, use_container_width=True)
 
-valor_formatado = f"{soma_conversao_filtrado:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-col10.metric("Total de Conversão", f"{valor_formatado}€")
+# --- Coluna Conversão, DESABILITADA ---
+#valor_formatado = f"{soma_conversao_filtrado:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+#col10.metric("Total de Conversão", f"{valor_formatado}€")
+
+# --- Coluna LT3 ---
+# 1. Iniciando variáveiis
+total_worked_days = 0
+days_with_calls_all_periods = 0
+
+# 2. Verifique se o df_filtrado não está vazio.
+if not df_filtrado.empty:
+    # Crie uma cópia para evitar o aviso SettingWithCopyWarning.
+    df_temp_filtered_calls = df_filtrado.copy()
+
+    # 3. Converter colunas de tentativas de chamada para o formato datetime.
+    df_temp_filtered_calls['1ª Ligação'] = pd.to_datetime(df_temp_filtered_calls['1ª Ligação'], errors='coerce')
+    df_temp_filtered_calls['2ª Ligação'] = pd.to_datetime(df_temp_filtered_calls['2ª Ligação'], errors='coerce') # Corrected typo
+    df_temp_filtered_calls['3ª Ligação'] = pd.to_datetime(df_temp_filtered_calls['3ª Ligação'], errors='coerce')
+
+    # 4. Concatenar e extrair datas únicas.
+    all_call_dates = pd.concat([
+        df_temp_filtered_calls['1ª Ligação'].dropna(),
+        df_temp_filtered_calls['2ª Ligação'].dropna(),
+        df_temp_filtered_calls['3ª Ligação'].dropna()
+    ]).dt.normalize().unique()
+
+    # 5. Conte o número de datas únicas.
+    total_worked_days = len(all_call_dates)
+
+    # Crie um DataFrame temporário para análise de chamadas.
+    df_calls = df_filtrado.copy()
+
+    # Converter colunas de tentativas de chamada para datetime.
+    df_calls['1ª Ligação'] = pd.to_datetime(df_calls['1ª Ligação'], errors='coerce')
+    df_calls['2ª Ligação'] = pd.to_datetime(df_calls['2ª Ligação'], errors='coerce')
+    df_calls['3ª Ligação'] = pd.to_datetime(df_calls['3ª Ligação'], errors='coerce')
+
+    # Definir intervalos de tempo.
+    morning_start = datetime.time(8, 0, 0)
+    morning_end = datetime.time(12, 0, 0)
+    afternoon_start = datetime.time(12, 0, 1)
+    afternoon_end = datetime.time(16, 0, 0)
+    evening_start = datetime.time(16, 0, 1)
+    evening_end = datetime.time(21, 0, 0)
+
+    # Recolha datas exclusivas para cada período.
+    unique_morning_dates = set()
+    unique_afternoon_dates = set()
+    unique_evening_dates = set()
+
+    call_columns = ['1ª Ligação', '2ª Ligação', '3ª Ligação']
+
+    for col in call_columns:
+        valid_calls = df_calls[col].dropna()
+        for call_timestamp in valid_calls:
+            call_time = call_timestamp.time()
+            call_date = call_timestamp.date()
+
+            if morning_start <= call_time <= morning_end:
+                unique_morning_dates.add(call_date)
+            if afternoon_start <= call_time <= afternoon_end:
+                unique_afternoon_dates.add(call_date)
+            if evening_start <= call_time <= evening_end:
+                unique_evening_dates.add(call_date)
+
+    # Encontre as datas que existem nos três conjuntos.
+    days_with_calls_all_periods = len(unique_morning_dates.intersection(unique_afternoon_dates, unique_evening_dates))
+
+    # 6. Exibir coluna LT3
+    col10.metric("LT3 - D. Leads / D. Trabalhados / 3 Períodos", f"{date_range_filtered} / {total_worked_days} / {days_with_calls_all_periods}")
+
+# --- Prompt para análise de IA ---
+resumo_status = []
+
+for _, row in status_counts.iterrows():
+    resumo_status.append(f"{row[0]}: {row[1]}")
+
+resumo_status_final = ", ".join(resumo_status)
+
+prompt = f'''
+Tivemos um total de {total_registros} leads entre {min_chegada_date_filtered} e {max_chegada_date_filtered}.
+ O Status mais frequente é {status_mais_frequente}.
+ A origem mais comum é {origem_mais_frequente}.
+ A campanha mais relevante é {campanha_mais_frequente}.
+ {pendente_leads_filtrado} leads não foram contactadas.
+ {count_na_hora_certa_filtrado} leads foram contactadas no horário pretendido nas primeiras 24h.
+ O horário preferencial mais frequente é {horario_preferencial_mais_frequente}.
+ O horário com mais frequência de ligações pelo Gestor de clientes é {horario_preferencial_mais_utilizado_em_ligacao}.
+ A distribuição por Status é: {resumo_status_final}.
+ {contactados_5min_filtrado} leads foram contactadas nos primeiros 5 minutos.
+ {contactados_1h_filtrado} leads foram contactadas na primeira hora e depois de 5 minutos.
+ {contactados_24h_filtrado} leads foram contactadas nas primeiras 24h e depois de 1 hora.
+ {contactados_depois_24h_filtrado} leads foram contactadas depois de 24h.
+ {total_nao_atendeu_filtered} leads não atenderam a ligação na primeira tentativa.
+ De {total_nao_atendeu_filtered} leads que não atenderam, foi feito a segunda tentativa em {tiveram_2a_ligacao_filtered} leads.
+ De {tiveram_2a_ligacao_filtered} que continuaram sem atender, foi feito a terceira tentativa em {tiveram_3a_ligacao_filtered} leads.
+ Entre a primeira e última data que chegaram Leads, temos {len(weekdays_in_range_filtered)} dias úteis (Seg. a Sex.), e destes, {count_weekdays_not_worked_filtered} dias não tem ligações feitas pelo Gestor.
+ De {date_range_filtered} dias com novas Leads, o Gestor trabalhou {total_worked_days} dias.
+ Dos {total_worked_days} dias trabalhados, {days_with_calls_all_periods} dias foram feitas ligações nos 3 períodos do dia, (08h às 12h, 12h às 16h e 16h às 20h).
+'''
+
+claudIA = "Clique no botão acima para gerar uma nova análise, se disponível. 😉"
+
+st.markdown("---")
+st.subheader("Análise de IA")
+st.markdown("Agente especialista em ciência de dados")
+
+#st.button("Gerar análise")
+
+if st.button("Gerar análise"):
+
+    payload = {
+        "prompt": prompt
+    }
+
+    body = json.dumps(payload, separators=(',', ':'))
+
+    signature = hmac.new(
+        secret.encode(),
+        body.encode(),
+        hashlib.sha256
+    ).hexdigest()
+
+    headers = {
+        "X-API-KEY": api_key,
+        "X-SIGNATURE": signature,
+        "X-API-SECRET": secret,
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(url, data=body, headers=headers, timeout=30)
+        response.raise_for_status()
+
+        claudIA = response.json()
+
+        st.success("Análise Status: OK")
+        #st.write(claudIA["text"])
+        claudIA = claudIA["text"]
+
+    except Exception as e:
+        st.error(str(e))
+
+copy = "Powered by: FS ClaudIA©"
+
+st.text_area(copy, claudIA)
+
+# --- Tabela de Dados Detalhados ---
+st.markdown("---")
+st.subheader("Dados Detalhados")
+st.markdown("DataFrame completo")
+st.dataframe(df_filtrado)
 
 # Powered by Forget Safety - EU
 # Codec by Rodrigo Perazoli
