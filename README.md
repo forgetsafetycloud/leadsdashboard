@@ -1,7 +1,33 @@
-# Leads Dashboard by Forget Safety
-Dashboard Python (StreamLit) para acompanhar métricas de desempenho de Leads a partir de um CSV preenchido através do Google Sheets pelo Gestor de Leads.  
-Usando o Google Sheets com a estrutura indicada abaixo, pode-se exportar um CSV, colocar na pasta do projeto e acompanhar métricas importantes de avaliação e tomadas de decição para o melhor aproveitamento de Leads.  
+# Leads Dashboard by Forget Safety™️
+Dashboard Python (StreamLit) com integração com IA para acompanhar métricas de desempenho de Leads a partir de um CSV preenchido através do Google Sheets pelo Gestor de Leads.  
+Usando o Google Sheets com a estrutura indicada abaixo, pode-se exportar um CSV, colocar na pasta do projeto, converter dados sensíveis em dados anônimos e acompanhar métricas importantes de avaliação e tomadas de decisão para o melhor aproveitamento de Leads.  
+  
+Veja em Produção: https://leadsdashboard.streamlit.app/
 ----------------------------  
+# Atualizações V1.1.1:
+------------------------------  
+Integração ClaudIA by Forget Safety©  
+Análise de IA - Agente especialista em análise de dados, Powered by: FS ClaudIA©. Crie um resumo de todos os dados analisados com uma opnião crítica.  
+
+# Como conectar a sua IA
+----------------------------  
+1. Configure no Streamlit as variáveis de ambiente com as chaves e url. 👇🏼  
+```toml
+API_URL = "https://agentedeia/webhook/"
+API_KEY = "sk_streamlit_APIKEY"
+API_SECRET = "SECRETKEY"
+```
+2. Para testes locais, crie .streamlit/secrets.toml e coloque as suas chaves e url.
+3. Protocolos de segurança para uma conexão segura com a IA foram estabelecidos na linha 596. 👇🏼
+```py
+signature = hmac.new(
+    secret.encode(),
+    body.encode(),
+    hashlib.sha256
+).hexdigest()
+```
+4. Espera-se um retorno em JSON com a saída "text": "analise"
+
 # Importação do DataFrame
 ----------------------------  
 Carregue o seu CSV na parta raiz do App, lembre-se de alterar o Nome do Arquivo e/ou Path para corresponder com o seu CSV e altere a linha 100. 👇🏼  
@@ -30,7 +56,7 @@ From | Status | Data / Hora | Campanha | Nome Completo | Contato | Melhor Horár
 🗒️ Anotações -> Mora longe, não quer se deslocar. (String)  
 💰 Conversão -> 1000 (String) / 'Sem casas decimais, pontos e vírgulas. O Código formata.' / Se precisar de preencher casas decimais, retire a formatação no código.  
 
-# Métricas disponíveis para análise (13)
+# Métricas disponíveis para análise (16)
 --------------  
 -> Total de Leads  
 -> Status Mais Frequente  
@@ -45,8 +71,11 @@ From | Status | Data / Hora | Campanha | Nome Completo | Contato | Melhor Horár
 -> Funil de Leads 'Não Atendeu' por Tentativa de Ligação (Gráfico)  
 -> Contagem de Dias Úteis (Entre 1ª e última Lead) Vs. Dias não Trabalhados (Neste Range)  
 -> Total de Conversão (Formatado com . nos milheiros e , nos decimais, em Euros)  
+-> LT3 - Nº de dias que tiveram Leads / Nº de dias Trabalhados / Nº de dias Trabalhados nos 3 Períodos (08h às 12h - 12h às 16h - 16h às 21h)  
+-> Análise de IA - Agente especialista em análise de dados. Powered by: FS ClaudIA©  
+-> Tabela de Dados Detalhados  
 
-Se quiser alterar para a sua moeda local como R$ ou $ edite a linha 446. 👇🏼  
+Se quiser alterar para a sua moeda local como R$ ou $ edite a linha 481. 👇🏼  
 ```py
 col10.metric("Total de Conversão", f"{valor_formatado}€")
 ```
@@ -69,12 +98,12 @@ df_anon.to_csv('DataFrame_Anon.csv', index=False)
 
 # Personalização
 --------------  
--> Logos / Pode alterar as logos do Sidebar nas linhas 14 e 20 do app.py / Certifique-se de colocar o caminho correto. 👇🏼  
+-> Logos / Pode alterar as logos do Sidebar nas linhas 24 e 30 do app.py / Certifique-se de colocar o caminho correto. 👇🏼  
 ```py
 logo_top_base64 = get_base64_image("img/toplogo.png")
 logo_bottom_base64 = get_base64_image("img/bottomlogo.png")
 ```
--> CSS / Da linha 32 a 97, pode estilizar o seu Dashboard usando CSS / Use o Developer Tools do seu navegador para encontrar IDs ou Classes das tags HTML renderizadas.
+-> CSS / Da linha 44 a 131, pode estilizar o seu Dashboard usando CSS / Use o Developer Tools do seu navegador para encontrar IDs ou Classes das tags HTML renderizadas.
 
 # Regra rigorosa
 ----------------  
