@@ -101,9 +101,14 @@ st.markdown(
         border-radius: 5px;
     }
 
-    /* Margem da Logo Bottom no Mobile */
+    /* Margem da Logo Bottom e Label da IA no Mobile */
     @media only screen and (max-width: 768px) {
-        #logo-bottom-sidebar { margin-top: 15vh; }
+        #logo-bottom-sidebar { margin-top: 5vh; }
+
+        [data-testid="stWidgetLabel"] > div:first-child {
+            color: white; /* Cor da Label */
+        }
+
     }
 
     /* Prompt IA */
@@ -113,6 +118,7 @@ st.markdown(
 
     [data-testid="stTextAreaRootElement"] > div:first-child {
         background-color: #202535; /* Cor do Fundo na TextArea */
+        height: 300px;
     }
 
     [data-testid="stTextAreaRootElement"] > div:first-child > .st-b6 {
@@ -551,31 +557,31 @@ resumo_status_final = ", ".join(resumo_status)
 
 prompt = f'''
 Tivemos um total de {total_registros} leads entre {min_chegada_date_filtered} e {max_chegada_date_filtered}.
- O Status mais frequente é {status_mais_frequente}.
- A origem mais comum é {origem_mais_frequente}.
- A campanha mais relevante é {campanha_mais_frequente}.
- {pendente_leads_filtrado} leads não foram contactadas.
- {count_na_hora_certa_filtrado} leads foram contactadas no horário pretendido nas primeiras 24h.
- O horário preferencial mais frequente é {horario_preferencial_mais_frequente}.
- O horário com mais frequência de ligações pelo Gestor de clientes é {horario_preferencial_mais_utilizado_em_ligacao}.
- A distribuição por Status é: {resumo_status_final}.
- {contactados_5min_filtrado} leads foram contactadas nos primeiros 5 minutos.
- {contactados_1h_filtrado} leads foram contactadas na primeira hora e depois de 5 minutos.
- {contactados_24h_filtrado} leads foram contactadas nas primeiras 24h e depois de 1 hora.
- {contactados_depois_24h_filtrado} leads foram contactadas depois de 24h.
- {total_nao_atendeu_filtered} leads não atenderam a ligação na primeira tentativa.
- De {total_nao_atendeu_filtered} leads que não atenderam, foi feito a segunda tentativa em {tiveram_2a_ligacao_filtered} leads.
- De {tiveram_2a_ligacao_filtered} que continuaram sem atender, foi feito a terceira tentativa em {tiveram_3a_ligacao_filtered} leads.
- Entre a primeira e última data que chegaram Leads, temos {len(weekdays_in_range_filtered)} dias úteis (Seg. a Sex.), e destes, {count_weekdays_not_worked_filtered} dias não tem ligações feitas pelo Gestor.
- De {date_range_filtered} dias com novas Leads, o Gestor trabalhou {total_worked_days} dias.
- Dos {total_worked_days} dias trabalhados, {days_with_calls_all_periods} dias foram feitas ligações nos 3 períodos do dia, (08h às 12h, 12h às 16h e 16h às 20h).
+O Status mais frequente é {status_mais_frequente}.
+A origem mais comum é {origem_mais_frequente}.
+A campanha mais relevante é {campanha_mais_frequente}.
+{pendente_leads_filtrado} leads não foram contactadas.
+{count_na_hora_certa_filtrado} leads foram contactadas no horário pretendido nas primeiras 24h.
+O horário preferencial mais frequente é {horario_preferencial_mais_frequente}.
+O horário com mais frequência de ligações pelo Gestor de clientes é {horario_preferencial_mais_utilizado_em_ligacao}.
+A distribuição por Status é: {resumo_status_final}.
+{contactados_5min_filtrado} leads foram contactadas nos primeiros 5 minutos.
+{contactados_1h_filtrado} leads foram contactadas na primeira hora e depois de 5 minutos.
+{contactados_24h_filtrado} leads foram contactadas nas primeiras 24h e depois de 1 hora.
+{contactados_depois_24h_filtrado} leads foram contactadas depois de 24h.
+{total_nao_atendeu_filtered} leads não atenderam a ligação na primeira tentativa.
+De {total_nao_atendeu_filtered} leads que não atenderam, foi feito a segunda tentativa em {tiveram_2a_ligacao_filtered} leads.
+De {tiveram_2a_ligacao_filtered} que continuaram sem atender, foi feito a terceira tentativa em {tiveram_3a_ligacao_filtered} leads.
+Entre a primeira e última data que chegaram Leads, temos {len(weekdays_in_range_filtered)} dias úteis (Seg. a Sex.), e destes, {count_weekdays_not_worked_filtered} dias não tem ligações feitas pelo Gestor.
+De {date_range_filtered} dias com novas Leads, o Gestor trabalhou {total_worked_days} dias.
+Dos {total_worked_days} dias trabalhados, {days_with_calls_all_periods} dias foram feitas ligações nos 3 períodos do dia, (08h às 12h, 12h às 16h e 16h às 20h).
 '''
 
-claudIA = "Clique no botão acima para gerar uma nova análise, se disponível. 😉"
+claudIA = "Clique no botão acima para gerar a análise. 😉"
 
 st.markdown("---")
 st.subheader("Análise de IA")
-st.markdown("Agente especialista em análise de dados")
+st.markdown("Agente especialista em análise de dados.")
 
 #st.button("Gerar análise")
 
@@ -601,17 +607,20 @@ if st.button("Gerar análise"):
     }
 
     try:
-        response = requests.post(url, data=body, headers=headers, timeout=(60, 300))
-        response.raise_for_status()
+        with st.spinner("A ClaudIA está pensando..."):
+            response = requests.post(url, data=body, headers=headers, timeout=(60, 300))
+            response.raise_for_status()
 
-        claudIA = response.json()
+            claudIA = response.json()
 
-        st.success("Análise Status: OK")
+        st.success("Geração de Análise Concluída")
         #st.write(claudIA["text"])
         claudIA = claudIA["text"]
 
     except Exception as e:
-        st.error(str(e))
+        #st.error(str(e))
+        st.error("Não foi possível conectar ao servidor de IA.")
+        st.stop()
 
 copy = "Powered by: FS ClaudIA©"
 
