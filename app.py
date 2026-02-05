@@ -575,7 +575,7 @@ claudIA = "Clique no botão acima para gerar uma nova análise, se disponível. 
 
 st.markdown("---")
 st.subheader("Análise de IA")
-st.markdown("Agente especialista em ciência de dados")
+st.markdown("Agente especialista em análise de dados")
 
 #st.button("Gerar análise")
 
@@ -601,7 +601,7 @@ if st.button("Gerar análise"):
     }
 
     try:
-        response = requests.post(url, data=body, headers=headers, timeout=30)
+        response = requests.post(url, data=body, headers=headers, timeout=(60, 300))
         response.raise_for_status()
 
         claudIA = response.json()
