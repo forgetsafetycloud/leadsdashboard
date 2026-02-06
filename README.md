@@ -1,17 +1,17 @@
 # Leads Dashboard by Forget Safety™️
-Dashboard Python (StreamLit) com integração com IA para acompanhar métricas de desempenho de Leads a partir de um CSV preenchido através do Google Sheets pelo Gestor de Leads.  
-Usando o Google Sheets com a estrutura indicada abaixo, pode-se exportar um CSV, colocar na pasta do projeto, converter dados sensíveis em dados anônimos e acompanhar métricas importantes de avaliação e tomadas de decisão para o melhor aproveitamento de Leads.  
+Dashboard Python (StreamLit) com integração com IA para acompanhar métricas de desempenho de Leads a partir de um CSV preenchido através do Google Sheets ou similar pelo Gestor de Leads.  
+Usando a tabela com a estrutura indicada abaixo, pode-se exportar um CSV, colocar na pasta do projeto, converter dados sensíveis em dados anônimos e acompanhar métricas importantes de avaliação e tomadas de decisão para o melhor aproveitamento de Leads.  
   
 Veja em Produção: https://leadsdashboard.streamlit.app/
 ----------------------------  
 # Atualizações V1.1.1:
 ------------------------------  
 Integração ClaudIA by Forget Safety©  
-Análise de IA - Agente especialista em análise de dados, Powered by: FS ClaudIA©. Crie um resumo de todos os dados analisados com uma opnião crítica.  
+Resumo de IA por agente especialista em análise de dados. Crie um resumo de todos os dados analisados com uma opnião crítica.  
 
 # Como conectar a sua IA
 ----------------------------  
-1. Configure no Streamlit as variáveis de ambiente com as chaves e url. 👇🏼  
+1. Configure no Streamlit as variáveis com as chaves e url. 👇🏼  
 ```toml
 API_URL = "https://agentedeia/webhook/"
 API_KEY = "sk_streamlit_APIKEY"
@@ -27,13 +27,14 @@ signature = hmac.new(
 ).hexdigest()
 ```
 4. Espera-se um retorno em JSON com a saída "text": "analise"
+5. Se não tiver acesso ao nosso agente, pode facilmente configurar a URL e Chaves da sua API de referência, se deseja acessar o nosso agente, contacte-nos via info@forgetsafety.cloud
 
 # Importação do DataFrame
 ----------------------------  
-Carregue o seu CSV na parta raiz do App, lembre-se de alterar o Nome do Arquivo e/ou Path para corresponder com o seu CSV e altere a linha 100. 👇🏼  
+Carregue o seu CSV na parta raiz do App, lembre-se de alterar o Nome do Arquivo e/ou Path para corresponder com o seu CSV e altere a linha 134. 👇🏼  
 ```py
 df = pd.read_csv("Leads_3M_anon_vals.csv")
-```
+```  
 
 # Estrutura do Google Sheets:
 ------------------------------  
@@ -54,7 +55,11 @@ From | Status | Data / Hora | Campanha | Nome Completo | Contato | Melhor Horár
 📞 D/H - 2ª Ligação -> 01/01/2026 00:32:06 / (Timestamp) 'dd/MM/yyyy HH:mm:ss'  
 📞 D/H - 3ª Ligação -> 01/01/2026 00:32:06 / (Timestamp) 'dd/MM/yyyy HH:mm:ss'  
 🗒️ Anotações -> Mora longe, não quer se deslocar. (String)  
-💰 Conversão -> 1000 (String) / 'Sem casas decimais, pontos e vírgulas. O Código formata.' / Se precisar de preencher casas decimais, retire a formatação no código.  
+💰 Conversão -> 1000 (String) / 'Sem casas decimais, pontos e vírgulas. O Código formata.'  
+Se precisar de preencher casas decimais, retire a formatação no código. 👇🏼  
+```py
+valor_formatado = f"{soma_conversao:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+```
 
 # Métricas disponíveis para análise (16)
 --------------  
@@ -80,12 +85,12 @@ Se quiser alterar para a sua moeda local como R$ ou $ edite a linha 481. 👇�
 col10.metric("Total de Conversão", f"{valor_formatado}€")
 ```
 
-# Privacidade
+# Privacidade - Dados Anônimos
 --------------  
+Caso esteja usando o Streamlit Cloud no plano gratuito, é necessário um projeto público no GitHub, como este. Portanto, pode usar o código abaixo, ajustando para as necessidades da sua tabela, e transformar os dados sensíveis em dados anônimos em ambiente local, antes de subir para o GitHub. No exemplo abaixo anonimizámos as colunas 'Nome', 'Contato' e 'Email', garantindo a privacidade dos clientes. 👇🏼  
 Tabela real de Leads recebidas em uma Clínica Dentária situada em Lisboa / Portugal entre a última semana de Novembro 25 e o último dia de Janeiro 26.  
 Por motivos de privacidade, todos os Nomes, Contatos e Emails foram substituídos por 'Jane Doe'.  
-
-Se quiser compartilhar um projeto real, garantindo a privacidade, pode converter o seu CSV e gerar um arquivo com anonimato usando o código Python. 👇🏼  
+Se quiser compartilhar um projeto real, garantindo a privacidade, pode converter o seu CSV e gerar um arquivo com anonimato usando o código abaixo. 👇🏼  
 ```py
 # Certifique-se que a variável 'df' tem o seu DataFrame original carregado.
 df_anon = df.copy()
@@ -93,7 +98,7 @@ df_anon['Nome'] = 'Jane Doe'
 df_anon['Contato'] = '351999111222'
 df_anon['Email'] = 'janedoe@gmail.com'
 df_anon.to_csv('DataFrame_Anon.csv', index=False)
-# Agora é só alterar o DataFrame na linha 100, apagar o antigo, e está pronto para compartilhar usando o Streamlit Community Cloud
+# Agora é só alterar o DataFrame na linha 134, apagar o antigo, e está pronto para compartilhar usando o Streamlit Community Cloud
 ```
 
 # Personalização
