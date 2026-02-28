@@ -131,7 +131,7 @@ st.markdown(
 )
 
 # --- Carregamento dos dados ---
-df = pd.read_csv("Leads_3M_anon_vals.csv")
+df = pd.read_csv("Leads_Clidec_Fev_26.csv")
 
 # --- Convertendo a coluna chegada em DT ---
 df['Chegada'] = pd.to_datetime(df['Chegada'], format='%d/%m/%Y, %H:%M:%S', errors='coerce')
