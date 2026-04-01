@@ -131,7 +131,7 @@ st.markdown(
 )
 
 # --- Carregamento dos dados ---
-df = pd.read_csv("Leads_Clidec_Fev_26.csv")
+df = pd.read_csv("Leads_Clidec_Mar26.csv")
 
 # --- Convertendo a coluna chegada em DT ---
 df['Chegada'] = pd.to_datetime(df['Chegada'], format='%d/%m/%Y, %H:%M:%S', errors='coerce')
@@ -625,6 +625,16 @@ if st.button("Gerar análise"):
 copy = "Powered by: FS ClaudIA©"
 
 st.text_area(copy, claudIA)
+
+# --- FOLLOW UP [Receção] ---
+st.markdown("---")
+st.subheader("113 / 0")
+st.markdown("De 113 Marcações a Receção fez 0 Follow Ups")
+
+# --- LEADS IA [Ary] ---
+st.markdown("---")
+st.subheader("25 / 3")
+st.markdown("De 25 Conversas iniciadas a IA marcou 3")
 
 # --- Tabela de Dados Detalhados ---
 st.markdown("---")
