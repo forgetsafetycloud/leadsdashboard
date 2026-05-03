@@ -131,7 +131,7 @@ st.markdown(
 )
 
 # --- Carregamento dos dados ---
-df = pd.read_csv("Leads_Clidec_Mar26.csv")
+df = pd.read_csv("Leads_Clidec_Abril_2026.csv")
 
 # --- Convertendo a coluna chegada em DT ---
 df['Chegada'] = pd.to_datetime(df['Chegada'], format='%d/%m/%Y, %H:%M:%S', errors='coerce')
@@ -628,13 +628,14 @@ st.text_area(copy, claudIA)
 
 # --- FOLLOW UP [Receção] ---
 st.markdown("---")
-st.subheader("113 / 0")
-st.markdown("De 113 Marcações a Receção fez 0 Follow Ups")
+st.subheader("134 / 1")
+st.markdown("De 134 Contatos na Receção, UMA (1) teve Follow Up, UMA! Em 2 meses.")
 
 # --- LEADS IA [Ary] ---
 st.markdown("---")
-st.subheader("25 / 3")
-st.markdown("De 25 Conversas iniciadas a IA marcou 3")
+st.subheader("138 / 19")
+st.markdown("De 138 Conversas iniciadas a IA marcou 19")
+st.markdown("Acompanhando as mensagens no WhatsApp é visível a insatisfação dos clientes com o nível do atendimento.")
 
 # --- Tabela de Dados Detalhados ---
 st.markdown("---")
